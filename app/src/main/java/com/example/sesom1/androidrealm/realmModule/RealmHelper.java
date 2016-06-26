@@ -2,10 +2,19 @@ package com.example.sesom1.androidrealm.realmModule;
 
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URL;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 /**
@@ -73,4 +82,46 @@ public class RealmHelper {
         realm.commitTransaction();
         return users;
     }
+
+    public void saveToRealmData(final RealmList<MusicObjModel> dataSource) {
+        Log.i("On", "size=" + dataSource.size());
+        Realm realm = Realm.getInstance(getConfig());
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(dataSource);
+        realm.commitTransaction();
+    }
+
+    public void saveToRealmDatabase(final RealmList<MusicObjModel> dataSource){
+        Log.i("On", "size="+dataSource.size());
+        try {
+            new AsyncTask<JSONArray, Void, Void>() {
+                @Override
+                protected Void doInBackground(JSONArray... arg0) {
+                    Realm realm = Realm.getInstance(getConfig());
+                    realm.beginTransaction();
+                    for (int i=0; i<dataSource.size(); i++ ) {
+                        Log.i("On", "i="+i+"data="+dataSource.get(i).getId());
+                        realm.copyToRealmOrUpdate(dataSource.get(i));
+
+                    }
+                    realm.commitTransaction();
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void result) {
+                    super.onPostExecute(result);
+                    Realm realm = Realm.getInstance(getConfig());
+                    RealmResults<MusicObjModel> ss = realm.where(MusicObjModel.class).findAll();
+                    Log.i("On", "result="+ss.size());
+                    realm.commitTransaction();
+                }
+            }.execute();
+
+        } catch (Exception e) {
+            Log.i("On", "error 111=" + e.toString());
+            e.printStackTrace();
+        }
+    }
+
 }

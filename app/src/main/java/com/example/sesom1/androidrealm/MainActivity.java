@@ -9,9 +9,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.sesom1.androidrealm.realmModule.MusicObjModel;
 import com.example.sesom1.androidrealm.realmModule.RealmHelper;
 import com.example.sesom1.androidrealm.realmModule.RealmUser;
 
+import java.util.List;
+
+import io.realm.RealmList;
 import io.realm.RealmResults;
 import io.realm.exceptions.RealmMigrationNeededException;
 
@@ -30,9 +34,37 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 addDataToRealm();
+                saveToRealmDatabase();
 
             }
         });
+    }
+
+
+
+    private void saveToRealmDatabase(){
+        MusicObjModel musicObjModel = null;
+        musicObjModel = new MusicObjModel();
+        musicObjModel.setId("123");
+        musicObjModel.setMusic_title("aaa");
+
+        RealmList<MusicObjModel> listMusin = new RealmList<>();
+        listMusin.add(musicObjModel);
+
+        musicObjModel = new MusicObjModel();
+        musicObjModel.setId("1234");
+        musicObjModel.setMusic_title("bbb");
+        listMusin.add(musicObjModel);
+        musicObjModel = new MusicObjModel();
+        musicObjModel.setId("12345");
+        musicObjModel.setMusic_title("cccc");
+        listMusin.add(musicObjModel);
+        musicObjModel = new MusicObjModel();
+        musicObjModel.setId("123456");
+        musicObjModel.setMusic_title("dddd");
+        listMusin.add(musicObjModel);
+        RealmHelper.getInstance(getApplicationContext()).saveToRealmData(listMusin);
+
     }
 
     private void addDataToRealm() {
